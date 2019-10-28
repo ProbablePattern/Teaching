@@ -1,0 +1,70 @@
+# Use Fama-French 3 Factor Model to estimate betas and alpha
+# install packages once, require packages each time you run the script
+install.packages(c('quantmod','xts'))
+require(quantmod); require(xts)
+
+# Load FF3 data from French's website
+#factors=read.csv(file="C:\\Users\\srrush\\Downloads\\FF3_Daily.CSV",header=TRUE)
+factors=read.csv(file="FF3_Daily.CSV",header=TRUE)
+
+# Look at the beginning of the data
+head(factors)
+
+# Stastical summary of the data
+summary(factors)
+
+# If not in decimal format, run this
+#factors[,2:5]=factors[,2:5]/100
+
+# Change the name of the first column to "Date"
+#colnames(factors)[1]='Date'
+
+# Format dates as daily date data
+factors[,'Date']=as.Date(as.character(factors[,'Date']),'%Y%m%d')
+
+# Remove rows with missing observations
+factors=na.omit(factors)
+
+# Convert to XTS format for time series
+factors=as.xts(factors[,c('Mkt.RF','SMB','HML','RF')],order.by=factors[,'Date'])
+
+# Check the data
+head(factors['2018-01-01/2018-02-01'])
+
+#################################################################################
+# Load portfolio returns
+#returns=read.csv(file="C:\\Users\\srrush\\Downloads\\BGSU.csv",header=TRUE)
+returns=read.csv(file="BGSU.csv",header=TRUE)
+
+# Only use first 2 columns: date and return
+#returns=returns[,1:2]
+
+# Format date as daily date data
+returns[,'Date']=as.Date(as.character(returns[,'Date']),'%m/%d/%Y')
+
+# Check the data
+head(returns)
+
+# Remove missing observations
+returns=na.omit(returns)
+returns=as.xts(as.numeric(returns[,2]),order.by=returns[,1])
+
+# Merge factors and portfolio returns
+data=merge.xts(returns,factors)
+
+# Check the data
+head(data)
+tail(data)
+# Remove missing observations
+data=na.omit(data)
+
+# Calculate the risk premium of the portfolio (either syntax)
+data$RP=as.numeric(data$returns-data$RF)
+#data[,'RP']=as.numeric(data[,'returns']-data[,'RF'])
+
+# Define the model and run the regression
+m1=RP~Mkt.RF+SMB+HML; ols=lm(m1,data)
+#m2=RP~Mkt.RF; ols=lm(m2,data)
+
+# Show the regression output
+summary(ols)
