@@ -50,6 +50,7 @@ head(value)
 value=na.omit(value)
 value=as.xts(as.numeric(value[,2]),order.by=value[,1])
 returns=periodReturn(value,period="weekly")
+#returns1=periodReturn[value,period='weekly']
 
 # Merge factors and portfolio returns
 data=merge.xts(returns,factors)
@@ -71,3 +72,6 @@ m1=RP~MRP+SMB+HML; ols=lm(m1,data)
 
 # Show the regression output
 summary(ols)
+
+# Show a different time period
+ols=lm(m1,data=data['2020-01-01/2020-09-01']); summary(ols)
