@@ -18,7 +18,7 @@ require(foreach)
 assets=c('VTSAX','VTIAX','VGSH','VBTLX')
 #assets=c('VTSAX','VTIAX','VBTLX')
 
-Download prices from Yahoo Finance
+#Download prices from Yahoo Finance
 getSymbols(assets,src='yahoo')
 
 # Calculate monthly returns from prices and combine them
@@ -43,7 +43,7 @@ Returns=apply(asset.returns,2,mean)
 
 #### Expected Performance
 # Find the risk-free rate and divide by 12 for monthly rf
-rf=.0168/12
+rf=.0013/12
 
 # The return on the equal-weighted portfolio is the mean of the expected returns
 return_e=mean(Returns)
@@ -123,3 +123,17 @@ Sharpe_rp=(return_rp-rf)/sqrt(var_rp)
 Sharpe
 Sharpe_e
 Sharpe_rp
+
+#### Use leverage on Risk Parity
+# Find weight to make expected return equal to mean-variance expected return
+# MV = w*RP-(1-w)*rf
+w=(out$objective_measures$mean + rf)/(return_rp + rf)
+
+# Calculate Sharpe ratio of levered Risk Parity Portfolio
+Sharpe_lrp=(out$objective_measures$mean - rf) / sqrt(w*var_rp)
+
+##### Compare the Sharpe ratios of each of the four portfolios
+Sharpe
+Sharpe_e
+Sharpe_rp
+Sharpe_lrp
