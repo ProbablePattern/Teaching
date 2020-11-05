@@ -76,7 +76,7 @@ pspec=add.constraint(portfolio=pspec, type="long_only")
 pspec=add.objective(portfolio=pspec, type="return", name="mean")
 pspec=add.objective(portfolio=pspec, type="risk", name="StdDev")
 
-# Run the porfolio optimizer in Portfolio Analytics
+# Run the portfolio optimizer in Portfolio Analytics
 out=optimize.portfolio(R=asset.returns,portfolio=pspec,optimize_method="ROI",maxSR=TRUE,trace=TRUE)
 
 # The full output is messy
