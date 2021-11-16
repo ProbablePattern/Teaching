@@ -10,6 +10,9 @@ fund=read.csv("C:\\Users\\srrush\\Downloads\\fund.csv",header=TRUE)
 # For Mac Users Only
 fund=read.csv("/Users/srrush/Downloads/fund.csv",header=TRUE)
 
+# For WSL on Windows (uncommon)
+#fund=read.csv("~/Downloads/fund.csv",header=TRUE)
+
 head(fund)
 str(fund)
 fund=fund[,1:2]
