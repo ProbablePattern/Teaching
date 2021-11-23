@@ -5,13 +5,13 @@
 require(tidyquant)
 
 # For Windows Users Only
-fund=read.csv("C:\\Users\\srrush\\Downloads\\fund.csv",header=TRUE)
+#fund=read.csv("C:\\Users\\srrush\\Downloads\\Risk Factors\\fund.csv",header=TRUE)
+fund=read.csv("C:\\Users\\srrush\\Downloads\\Risk Factors\\Fund 2Yr.csv",header=TRUE)
+fund=read.csv("C:\\Users\\Classroom\\Downloads\\Risk Factors\\Fund 2Yr.csv",header=TRUE)
 
 # For Mac Users Only
-fund=read.csv("/Users/srrush/Downloads/fund.csv",header=TRUE)
+fund=read.csv("/Users/srrush/Downloads/Risk Factors/fund.csv",header=TRUE)
 
-# For WSL on Windows (uncommon)
-#fund=read.csv("~/Downloads/fund.csv",header=TRUE)
 
 head(fund)
 str(fund)
@@ -21,7 +21,7 @@ colnames(fund)=c('Date','Value')
 # Format date as daily date data
 fund[,"Date"]=as.Date(fund[,"Date"],format="%m/%d/%Y")
 
-# Mac Users may need to use this line instead
+# Mac Users may need to use this line instead if you have 2 digit year
 fund[,"Date"]=as.Date(fund[,"Date"],format="%m/%d/%y")
 
 fund=as.xts(unlist(fund[,"Value"]),order.by=unlist(fund[,"Date"]))
@@ -30,7 +30,9 @@ fund=merge(fund,periodReturn(fund,period="daily"))
 colnames(fund)=c("Value","Return")
 
 # Factors
-factors=read.csv(file="C:\\Users\\srrush\\Downloads\\FF5.CSV",header=TRUE,skip=3)
+factors=read.csv(file="C:\\Users\\srrush\\Downloads\\Risk Factors\\FF5.CSV",header=TRUE,skip=3)
+factors=read.csv(file="C:\\Users\\Classroom\\Downloads\\Risk Factors\\FF5.CSV",header=TRUE,skip=3)
+
 head(factors)
 # Format date as daily date data
 factors[,"Date"]=as.Date(as.character(factors[,1]),format="%Y%m%d")
@@ -53,8 +55,81 @@ data=merge(data,RP)
 
 # APT model
 m1=RP~Mkt.RF+SMB+HML+RMW+CMA
-summary(lm(m1,data=data))
-  
+summary(lm(m1,data=data["2020-01-01/2020-12-31"]))
+
 # Subsets
-subset1=data["2021-01-01/2021-03-31"]
-subset2=data["2021-03-31/"]
+#subset1=data["2021-01-01/2021-04-30"]
+#subset2=data["2021-05-01/"]
+
+# If data is not available for the current year
+subset1=data["2020-01-01/2020-06-30"]
+subset2=data["2020-07-01/2020-12-31"]
+
+summary(lm(m1,data=subset1))
+summary(lm(m1,data=subset2))
+
+#########################################################################################
+#########################################################################################
+#### q factor model #####################################################################
+#########################################################################################
+require(tidyquant)
+
+# For Windows Users Only
+fund=read.csv("C:\\Users\\srrush\\Downloads\\Risk Factors\\Fund 2Yr.csv",header=TRUE)
+fund=read.csv("C:\\Users\\Classroom\\Downloads\\Risk Factors\\Fund 2Yr.csv",header=TRUE)
+
+
+# For Mac Users Only
+fund=read.csv("/Users/srrush/Downloads/Risk Factors/fund.csv",header=TRUE)
+
+head(fund)
+str(fund)
+fund=fund[,1:2]
+colnames(fund)=c('Date','Value')
+
+# Format date as daily date data
+fund[,"Date"]=as.Date(fund[,"Date"],format="%m/%d/%Y")
+
+fund=as.xts(unlist(fund[,"Value"]),order.by=unlist(fund[,"Date"]))
+colnames(fund)="Value"
+fund=merge(fund,periodReturn(fund,period="daily"))
+colnames(fund)=c("Value","Return")
+
+# Factors
+qfactors=read.csv(file="C:\\Users\\Classroom\\Downloads\\Risk Factors\\q5_factors_daily_2020.csv")
+head(qfactors)
+# Format date as daily date data
+qfactors[,"Date"]=as.Date(as.character(qfactors[,1]),format="%Y%m%d")
+qfactors[,1]=NULL
+# Decimal Format
+qfactors[,1:6]=qfactors[,1:6]/100
+
+qfactors=as.xts(qfactors[,1:6],order.by=unlist(qfactors[,7]))
+
+head(qfactors)
+
+# Merge
+data=merge(fund,qfactors)
+data=data[!is.na(data[,3])]
+data=data[!is.na(data[,'Return'])]
+summary(data)
+
+# Calculate Risk Premium
+RP=data[,"Return"]-data[,"R_F"]
+colnames(RP)="RP"
+data=merge(data,RP)
+
+# APT model
+m2=RP~R_MKT+R_ME+R_IA+R_ROE+R_EG
+summary(lm(m2,data=data["2020-01-01/2020-12-31"]))
+
+# Subsets
+#subset1=data["2021-01-01/2021-04-30"]
+#subset2=data["2021-05-01/"]
+
+# If data is not available for the current year
+subset1=data["2020-01-01/2020-06-30"]
+subset2=data["2020-07-01/2020-12-31"]
+
+summary(lm(m2,data=subset1))
+summary(lm(m2,data=subset2))
