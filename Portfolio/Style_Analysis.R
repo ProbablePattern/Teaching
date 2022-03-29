@@ -2,8 +2,16 @@
 install.packages('foreach')
 require(tidyquant); require(foreach)
 
+# Windows in Downloads folder named "Style"
+path="C:\\Users\\srrush\\Downloads\\Style\\"
+path="C:\\Users\\Classroom\\Downloads\\Style\\"
+
+# Mac in Downloads folder named "Style"
+path="/Users/srrush/Downloads/Style/"
+
+
 # Load Portfolio Returns
-returns=read.csv(file="C:\\Users\\Classroom\\Downloads\\Style\\Fund 2Yr.csv",header=TRUE)
+returns=read.csv(file=paste(path,"Fund 2Yr.csv",sep=""),header=TRUE)
 colnames(returns)=c('Date','Value')
 head(returns)
 
