@@ -6,6 +6,8 @@ require(tidyquant)
 
 path="D:\\Data\\"
 
+
+
 # For Windows Users Only
 #fund=read.csv("C:\\Users\\srrush\\Downloads\\Risk Factors\\fund.csv",header=TRUE)
 fund=read.csv(paste(path,"Risk Factors\\Portfolio Values 2022.csv",sep=""),header=TRUE)
