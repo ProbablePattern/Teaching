@@ -1,17 +1,21 @@
 # Dr. Rush's Awesome Script
-install.packages('foreach')
+#install.packages('foreach')
 require(tidyquant); require(foreach)
 
-# Windows in Downloads folder named "Style"
-path="C:\\Users\\srrush\\Downloads\\Style\\"
-path="C:\\Users\\Classroom\\Downloads\\Style\\"
+#### Define file location
+# Windows in Downloads folder named "code" with username "Classroom"
+setwd("C:\\Users\\Classroom\\Downloads\\code\\")
+# Mac in Downloads folder named "Style" with username "srrush"
+setwd("/Users/srrush/Downloads/Style/")
 
-# Mac in Downloads folder named "Style"
-path="/Users/srrush/Downloads/Style/"
-
+#### For Dr. Rush #####################################
+setwd("C:\\Users\\srrush\\code\\Teaching\\Portfolio\\")
+# USB Drive (alternative)
+setwd("D:\\code\\")
+#######################################################
 
 # Load Portfolio Returns
-returns=read.csv(file=paste(path,"Fund 2Yr.csv",sep=""),header=TRUE)
+returns=read.csv(file="Data\\Portfolio Values 2022.csv",header=TRUE)
 colnames(returns)=c('Date','Value')
 head(returns)
 
@@ -27,7 +31,7 @@ head(returns)
 # Download Style Returns
 styles=c('VEU','VTV','VUG','VBR','VBK')
 style.names=c('International','Large.Value','Large.Growth','Small.Value','Small.Growth')
-getSymbols(styles,src='yahoo')
+getSymbols(styles,src='yahoo',auto.assign=TRUE)
 
 style.returns=foreach(i=styles,.combine='cbind') %do% {
   periodReturn(get(i),period='daily')
