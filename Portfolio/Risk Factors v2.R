@@ -10,6 +10,8 @@ setwd("C:\\Users\\Classroom\\Downloads\\R\\")
 # Mac in Downloads folder named "R" with username "srrush"
 setwd("/Users/srrush/Downloads/R/")
 
+
+
 # For Windows Users Only
 fund=read.csv("Portfolio Values 2022.csv",header=TRUE)
 
