@@ -3,10 +3,10 @@
 require(tidyquant); require(foreach)
 
 #### Define file location
-# Windows in Downloads folder named "code" with username "Classroom"
-setwd("C:\\Users\\Classroom\\Downloads\\code\\")
-# Mac in Downloads folder named "Style" with username "srrush"
-setwd("/Users/srrush/Downloads/Style/")
+# Windows in Downloads folder named "R" with username "Classroom"
+setwd("C:\\Users\\Classroom\\Downloads\\R\\")
+# Mac in Downloads folder named "R" with username "srrush"
+setwd("/Users/srrush/Downloads/R/")
 
 #### For Dr. Rush #####################################
 setwd("C:\\Users\\srrush\\code\\Teaching\\Portfolio\\")
@@ -15,7 +15,7 @@ setwd("D:\\code\\")
 #######################################################
 
 # Load Portfolio Returns
-returns=read.csv(file="Data\\Portfolio Values 2022.csv",header=TRUE)
+returns=read.csv(file="Portfolio Values 2022.csv",header=TRUE)
 colnames(returns)=c('Date','Value')
 head(returns)
 

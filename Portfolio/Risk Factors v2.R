@@ -1,18 +1,20 @@
 # Run once
-install.packages("tidyquant")
+#install.packages("tidyquant")
 
 # Run each time
 require(tidyquant)
 
-path="D:\\Data\\"
+#### Define file location
+# Windows in Downloads folder named "code" with username "Classroom"
+setwd("C:\\Users\\Classroom\\Downloads\\R\\")
+# Mac in Downloads folder named "R" with username "srrush"
+setwd("/Users/srrush/Downloads/R/")
 
 # For Windows Users Only
-#fund=read.csv("C:\\Users\\srrush\\Downloads\\Risk Factors\\fund.csv",header=TRUE)
-fund=read.csv(paste(path,"Risk Factors\\Portfolio Values 2022.csv",sep=""),header=TRUE)
-fund=read.csv("C:\\Users\\Classroom\\Downloads\\Risk Factors\\Fund 2Yr.csv",header=TRUE)
+fund=read.csv("Portfolio Values 2022.csv",header=TRUE)
 
 # For Mac Users Only
-fund=read.csv("/Users/srrush/Downloads/Risk Factors/fund.csv",header=TRUE)
+fund=read.csv("Portfolio Values 2022.csv",header=TRUE)
 
 
 head(fund)
@@ -32,9 +34,7 @@ fund=merge(fund,periodReturn(fund,period="daily"))
 colnames(fund)=c("Value","Return")
 
 # Factors
-factors=read.csv(file="C:\\Users\\srrush\\Downloads\\Risk Factors\\FF5.CSV",header=TRUE,skip=3)
-factors=read.csv(file="C:\\Users\\Classroom\\Downloads\\Risk Factors\\FF5.CSV",header=TRUE,skip=3)
-factors=read.csv(file=paste(path,"Risk Factors\\FF5 2022.CSV",sep=""),header=TRUE,skip=3)
+factors=read.csv(file="FF5 2022.CSV",header=TRUE,skip=3)
 
 head(factors)
 # Format date as daily date data
@@ -58,7 +58,7 @@ data=merge(data,RP)
 
 # APT model
 m1=RP~Mkt.RF+SMB+HML+RMW+CMA
-summary(lm(m1,data=data["2020-09-01/2022-09-30"]))
+summary(lm(m1,data=data["2021-01-01/2021-12-31"]))
 
 # Subsets
 #subset1=data["2021-01-01/2021-04-30"]
@@ -78,12 +78,10 @@ summary(lm(m1,data=subset2))
 require(tidyquant)
 
 # For Windows Users Only
-fund=read.csv("C:\\Users\\srrush\\Downloads\\Risk Factors\\Fund 2Yr.csv",header=TRUE)
-fund=read.csv("C:\\Users\\Classroom\\Downloads\\Risk Factors\\Fund 2Yr.csv",header=TRUE)
-
+fund=read.csv("Portfolio Values 2022.csv",header=TRUE)
 
 # For Mac Users Only
-fund=read.csv("/Users/srrush/Downloads/Risk Factors/fund.csv",header=TRUE)
+fund=read.csv("Portfolio Values 2022.csv",header=TRUE)
 
 head(fund)
 str(fund)
@@ -99,7 +97,7 @@ fund=merge(fund,periodReturn(fund,period="daily"))
 colnames(fund)=c("Value","Return")
 
 # Factors
-qfactors=read.csv(file="C:\\Users\\Classroom\\Downloads\\Risk Factors\\q5_factors_daily_2020.csv")
+qfactors=read.csv(file="q5_factors_daily_2021.csv")
 head(qfactors)
 # Format date as daily date data
 qfactors[,"Date"]=as.Date(as.character(qfactors[,1]),format="%Y%m%d")
@@ -124,7 +122,7 @@ data=merge(data,RP)
 
 # APT model
 m2=RP~R_MKT+R_ME+R_IA+R_ROE+R_EG
-summary(lm(m2,data=data["2020-01-01/2020-12-31"]))
+summary(lm(m2,data=data["2021-01-01/2021-12-31"]))
 
 # Subsets
 #subset1=data["2021-01-01/2021-04-30"]
