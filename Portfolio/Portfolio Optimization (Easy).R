@@ -20,6 +20,7 @@ data=read_excel("Data/Bloomberg Collection.xlsx",sheet="Static",skip=3,col_names
 colnames(data)=c("Date",colnames(read_excel("Data/Bloomberg Collection.xlsx",sheet="Static",n_max = 0)))
 data=as.data.table(data)
 
+# Forward-Looking Expectations
 RP=read_excel("Data/Bloomberg Collection.xlsx",sheet="Static",n_max=2)
 RP=as.data.table(RP)
 colnames(RP)[1]="Series"
@@ -102,3 +103,15 @@ Tangency$Sharpe # Tangency Portfolio Sharpe Ratio
 
 # AUM (in millions) necessary for performance improvement to justify 6-figure/year salary
 100000/((Tangency$Sharpe*performance0$SD-performance0$RiskPremium)*252)/1000000
+
+
+#### Data Description #####
+#Single Spreadsheet
+#Line 1: Tickers
+#Line 2: Beta
+#Line 3: Expected Returns
+#Line 4-end: returns
+# Column 1: Dates
+# Column 2: risk-free rate
+# Column 3-end: risk assets
+
