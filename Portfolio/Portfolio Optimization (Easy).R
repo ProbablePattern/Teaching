@@ -24,7 +24,7 @@ data=as.data.table(data)
 RP=read_excel("Data/Bloomberg Collection.xlsx",sheet="Static",n_max=2)
 RP=as.data.table(RP)
 colnames(RP)[1]="Series"
-rf=mean(tail(data$RF,3)); RP[,RF:=c(0,rf)]
+#rf=mean(tail(data$RF,3)); RP[,RF:=c(0,rf)]
 returns=as.numeric(RP[2,3:ncol(RP)])
 
 #### Covariance Matrix of Risky Assets ####
