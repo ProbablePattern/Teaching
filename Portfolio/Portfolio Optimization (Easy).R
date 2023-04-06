@@ -7,15 +7,18 @@ require(foreach)
 require(doParallel)
 require(data.table)
 
-#### Set Number of Processing Cores
+#### Set Number of Processing Cores ####
 registerDoParallel(detectCores()-1) # Mac or Linux
 #registerDoParallel(max((detectCores()/2)-1,1)) # Windows
 print(paste("This machine has",detectCores(),"cores and is using",getDoParWorkers(),"core(s)."))
 
-#### Working Directory
+#### Working Directory ####
 setwd("/Users/s73f4n/code/Teaching/Portfolio")
 
-#### Load and Prepare Data
+#### S&P 500 sector weights (used for comparison) ####
+Benchmark=c(0.257, 0.158, 0.117, 0.098, 0.087, 0.072, 0.073, 0.052, 0.027, 0.032, 0.027)
+
+#### Load and Prepare Data ####
 data=read_excel("Data/Bloomberg Collection.xlsx",sheet="Static",skip=3,col_names=FALSE)
 colnames(data)=c("Date",colnames(read_excel("Data/Bloomberg Collection.xlsx",sheet="Static",n_max = 0)))
 data=as.data.table(data)
@@ -24,7 +27,7 @@ data=as.data.table(data)
 RP=read_excel("Data/Bloomberg Collection.xlsx",sheet="Static",n_max=2)
 RP=as.data.table(RP)
 colnames(RP)[1]="Series"
-#rf=mean(tail(data$RF,3)); RP[,RF:=c(0,rf)]
+rf=mean(tail(data$RF,3)); RP[,RF:=c(0,rf)]
 returns=as.numeric(RP[2,3:ncol(RP)])
 
 #### Covariance Matrix of Risky Assets ####
@@ -57,6 +60,16 @@ performance=foreach(i=1:50000,.combine=rbind) %dopar% {
   return(performance)
 }
 
+# Create Index Portfolio
+weights=Benchmark
+weights=weights/sum(weights)
+rp=t(weights) %*% returns[1:11] # Risk Premium
+sigma=cov(data[,3:13])
+sd=sqrt(t(weights) %*% (sigma %*% weights)) # Standard Deviation
+sharpe=rp/sd # Sharpe Ratio
+index=as.data.table(t(c(weights,rp,sd,sharpe)))
+names(index)=c(tickers[1:11],"RiskPremium","SD","Sharpe")
+
 # Identify Minimum Variance and Tangency Portfolios
 MinVar=performance[which.min(performance$SD),]; MinVar
 Tangency=performance[which.max(performance$Sharpe),]; Tangency
@@ -67,10 +80,12 @@ require(ggplot2)
 # Calculate graph parameters
 label1=c(quantile(performance$SD,.015),quantile(performance$RiskPremium,.99))
 label2=c(quantile(performance$SD,.01),min(performance$RiskPremium)*.99)
+label3=c(quantile(performance$SD,.5),quantile(performance$RiskPremium,.999))
 
 # Offsets for arrows
 offset1=c(abs(label1[1]-Tangency$SD),abs(label1[2]-Tangency$RiskPremium))/20
 offset2=c(abs(label2[1]-MinVar$SD),abs(label2[2]-MinVar$RiskPremium))/10
+offset3=c(abs(label3[1]-index$SD),abs(label3[2]-index$RiskPremium))/10
 
 # Graph the Frontier
 ggplot(performance,aes(x=SD, y=RiskPremium, color=Sharpe)) +
@@ -81,13 +96,18 @@ ggplot(performance,aes(x=SD, y=RiskPremium, color=Sharpe)) +
        title="Efficient Frontier using Random Portfolios") +
   geom_point(aes(x=SD, y=RiskPremium), data=Tangency, color='red') +
   geom_point(aes(x=SD, y=RiskPremium), data=MinVar, color='red') +
+  geom_point(aes(x=SD, y=RiskPremium), data=index, color='red') +
   annotate('text', x=label1[1], y=label1[2], label="Tangency Portfolio \n (Market Portfolio)")+
   annotate('text', x=label2[1], y=label2[2], label="Min Variance Portfolio") +
+  annotate('text', x=label3[1], y=label3[2], label="Index Portfolio") +
   annotate(geom='segment', x=label1[1], xend=Tangency$SD+offset1[1],
            y=label1[2]-2*offset1[2], yend=(Tangency$RiskPremium+offset1[2]),
            color='red', arrow=arrow(type="open")) +
   annotate(geom='segment', x=label2[1], xend=MinVar$SD+offset2[1],
            y=label2[2]+offset2[2], yend=(MinVar$RiskPremium-offset2[2]),
+           color='red', arrow=arrow(type="open")) +
+  annotate(geom='segment', x=label3[1], xend=index$SD,
+           y=label3[2]-offset3[2], yend=(index$RiskPremium+offset3[2]),
            color='red', arrow=arrow(type="open"))
 
 #### Performance Improvement over Equal-Weighted Portfolio
