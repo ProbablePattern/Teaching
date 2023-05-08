@@ -6,7 +6,7 @@ require(tidyquant); require(foreach)
 # Windows in Downloads folder named "R" with username "Classroom"
 setwd("C:\\Users\\Classroom\\Downloads\\R\\")
 # Mac in Downloads folder named "R" with username "srrush"
-setwd("/Users/srrush/Downloads/R/")
+setwd("/Users/s73f4n/code/Teaching/Portfolio")
 
 #### For Dr. Rush #####################################
 setwd("C:\\Users\\srrush\\code\\Teaching\\Portfolio\\")
@@ -15,12 +15,13 @@ setwd("D:\\code\\")
 #######################################################
 
 # Load Portfolio Returns
-returns=read.csv(file="Portfolio Values 2022.csv",header=TRUE)
+returns=read.csv(file="Data/Portfolio Values 2023.csv",header=TRUE)
 colnames(returns)=c('Date','Value')
+returns=returns[,1:2]
 head(returns)
 
 # Format date as daily date data
-returns[,'Date']=as.Date(as.character(returns[,'Date']),'%m/%d/%Y')
+returns[,'Date']=as.Date(as.character(returns[,'Date']),'%m/%d/%y')
 head(returns)
 returns=na.omit(returns)
 returns=as.xts(as.numeric(returns[,2]),order.by=returns[,1])
@@ -48,9 +49,9 @@ data=na.omit(data)
 head(data)
 
 # Select Subset (one at a time)
-subset=data["2021-01-01/"] # Current Year
-subset=data["2021-01-01/2021-04-30"] # First Half
-subset=data["2021-05-01/"] # Second Half
+subset=data["2022-01-01/"] # Current Year
+subset=data["2022-01-01/2022-04-30"] # First Half
+subset=data["2022-05-01/"] # Second Half
 
 # Standardize Data
 subset=reclass(apply(subset,MARGIN=2,FUN=scale),match.to=subset)
