@@ -1,5 +1,5 @@
 # Charts Gold prices in USD from Oanda
-require(Quantmod)
+require(quantmod)
 #fetch data
 getSymbols(c("XAU/USD","XPT/USD","XPD/USD","XAG/USD"),src="oanda")
 #setup the plot area, each TA is another graph
